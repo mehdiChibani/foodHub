@@ -1,7 +1,10 @@
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_apptest/NavigationRoutes/Routes.dart';
 import 'package:get/get.dart';
+import 'package:shimmer/shimmer.dart';
 import '../components/home/DrawerClass.dart';
 import '../models/post_model.dart';
 import 'package:get_storage/get_storage.dart';
@@ -51,7 +54,8 @@ class _Home extends State<Home> {
           child:
           CircleAvatar(
             radius: 20.0,
-            backgroundImage:NetworkImage('https://dm.henkel-dam.com/is/image/henkel/men_perfect_com_thumbnails_home_pack_400x400-wcms-international?scl=1&fmt=jpg'),     backgroundColor: Colors.transparent,),
+            backgroundImage:
+            NetworkImage('https://dm.henkel-dam.com/is/image/henkel/men_perfect_com_thumbnails_home_pack_400x400-wcms-international?scl=1&fmt=jpg'),     backgroundColor: Colors.transparent,),
         ))),
         backgroundColor: Colors.deepOrangeAccent,
         title:  Center(
@@ -106,7 +110,48 @@ class _Home extends State<Home> {
 
                 Padding(
                     padding: EdgeInsets.all(5),
-                    child:Image(image: NetworkImage(posts[index].imgUrl.toString()))),
+                    child:
+
+
+
+                    //Image(image: NetworkImage(posts[index].imgUrl.toString()))),
+                CachedNetworkImage(
+                imageUrl: posts[index].imgUrl.toString(),
+                imageBuilder: (context, imageProvider) => Container(
+                  height: 250,
+                decoration: BoxDecoration(
+                image: DecorationImage(
+                image: imageProvider,
+                fit: BoxFit.cover,
+                ),
+                ),
+                ),
+                placeholder: (context, url) => Shimmer(
+gradient: LinearGradient(
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+                colors: [
+                Colors.orange.withOpacity(0.1),
+                Colors.deepOrangeAccent.withOpacity(0.4),
+                ],
+                )
+                ,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                itemCount: 1,
+                itemBuilder: (context, index) {
+                return Card(
+                elevation: 1.0,
+                shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                ),
+                child: const SizedBox(height: 250,),
+                );
+                },
+                ),
+                ),
+                errorWidget: (context, url, error) => Icon(Icons.error),
+                ),),
                 Row(
 
                   children: [
@@ -157,6 +202,7 @@ class _Home extends State<Home> {
                   onTap: () {
                     setState(() {
                       selectedIndex = i;
+                      Get.toNamed(RoutesClass.videos);
                     });
                   },
                   child: AnimatedContainer(
